@@ -15,6 +15,7 @@ public class InnerProductEncryption {
     public void SetUp(int lambda, int n){
         this.lambda = lambda;
         this.n = n;
+        System.out.println("lambda: " + lambda);
         GenerateParameters();
     }
 
