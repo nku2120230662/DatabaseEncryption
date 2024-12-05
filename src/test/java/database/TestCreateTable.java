@@ -6,6 +6,6 @@ import org.junit.Test;
 public class TestCreateTable {
     @Test
     public void testCreateTable() throws Exception {
-        CreateTable.CreateCourses();
+        CreateTable.CreateEncryptedStudents();
     }
 }

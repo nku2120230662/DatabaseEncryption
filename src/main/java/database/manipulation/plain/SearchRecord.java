@@ -9,7 +9,7 @@ import java.sql.Statement;
 public class SearchRecord {
 
     // 查询表hello的全部字段
-    public boolean Search() throws Exception{
+    public static boolean SearchHello() throws Exception{
         Connector mc = new Connector();
         Statement stmt = null;
         stmt = mc.getConnection().createStatement();

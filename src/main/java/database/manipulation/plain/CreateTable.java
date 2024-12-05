@@ -30,4 +30,27 @@ public class CreateTable {
         return false;
     }
 
+    public static boolean CreateEncryptedStudents() throws Exception{
+        Connector mc = new Connector();
+        Connection conn=mc.getConnection();
+        String sql="CREATE TABLE IF NOT EXISTS " +
+                "encrypted_students " +
+                "(" +
+                "en_id VARCHAR(255)," +
+                "en_name VARCHAR(255)" +
+                ")";
+        Statement stmt=conn.createStatement();
+        int result=stmt.executeUpdate(sql);//
+        if(result==0){
+            System.out.println("Table encrypted_students created");
+            stmt.close();
+            conn.close();
+            return true;
+        }
+        System.out.println("Table encrypted_students failed");
+        stmt.close();
+        conn.close();
+        return false;
+    }
+
 }

@@ -7,11 +7,19 @@ public class SymmeticEncryption {
                 System.out.println("INT11");
                 return obj.toString();
             case "java.lang.String":
-                System.out.println("String11");
-                return obj.toString();
+                String cipherText = (String) obj+"abc";
+                System.out.println(cipherText);
+                return cipherText;
             default:
                 System.out.println(obj.getClass().getName());
                 return obj.toString();
         }
+    }
+
+    public static String Decrypt(String CipherText) {
+
+        String DecryptedText = CipherText.substring(0,CipherText.length()-3);
+
+        return DecryptedText;
     }
 }
