@@ -7,16 +7,15 @@ package database.manipulation.crypt;
  * */
 
 import database.config.Connector;
-import encryption.symmetric.SymmeticEncryption;
-import org.bouncycastle.jce.provider.symmetric.AES;
+import encryption.symmetric.SymmetricEncryption;
 
 import java.sql.Connection;
 import java.sql.Statement;
 
 public class InsertEncryptedRecords {
     public static boolean InsertEncryptedStudent()throws Exception{
-        String en_id= SymmeticEncryption.Encrypt("123");
-        String en_name=SymmeticEncryption.Encrypt("name");
+        String en_id= SymmetricEncryption.Encrypt("123");
+        String en_name= SymmetricEncryption.Encrypt("name");
         String sql="insert into encrypted_students values (" +
                 "'" +en_id+ "'"+
                 ",'" +en_name+ "'"+

@@ -1,13 +1,15 @@
 package encryption.symmetric;
 
-public class SymmeticEncryption {
-    public static String Encrypt(Object obj) {
+import encryption.function.AESExample;
+
+public class SymmetricEncryption {
+    public static String Encrypt(Object obj) throws Exception {
         switch(obj.getClass().getName()) {
             case "java.lang.Integer":
                 System.out.println("INT11");
                 return obj.toString();
             case "java.lang.String":
-                String cipherText = (String) obj+"abc";
+                String cipherText = AESExample.encrypt((String) obj);
                 System.out.println(cipherText);
                 return cipherText;
             default:
@@ -16,9 +18,9 @@ public class SymmeticEncryption {
         }
     }
 
-    public static String Decrypt(String CipherText) {
+    public static String Decrypt(String CipherText)throws Exception {
 
-        String DecryptedText = CipherText.substring(0,CipherText.length()-3);
+        String DecryptedText = AESExample.decrypt(CipherText);
 
         return DecryptedText;
     }
