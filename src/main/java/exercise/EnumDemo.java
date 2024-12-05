@@ -1,8 +1,6 @@
 package exercise;
 
 import java.math.BigDecimal;
-import java.util.Scanner;
-import java.util.StringJoiner;
 
 // 练习输入流
 enum Weekday {
@@ -10,7 +8,7 @@ enum Weekday {
 
 }
 
-public class source1 {
+public class EnumDemo {
     public static void main(String[] args) {
         BigDecimal d3 = new BigDecimal("1234500");
         BigDecimal d4 = d3.stripTrailingZeros();

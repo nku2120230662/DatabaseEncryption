@@ -6,7 +6,7 @@ import org.junit.Test;
 
 public class TestSearchRecords {
     @Test
-    public void testSearch() throws Exception {
+    public void testSearchEncryptedStudent() throws Exception {
         SearchEncryptedRecords.SearchEncryptedStudent();
     }
 }

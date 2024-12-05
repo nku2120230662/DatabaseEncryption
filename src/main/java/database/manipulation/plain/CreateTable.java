@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.Statement;
 
 public class CreateTable {
+
     public static boolean CreateCourses() throws Exception{
         Connector mc = new Connector();
         Connection conn=mc.getConnection();

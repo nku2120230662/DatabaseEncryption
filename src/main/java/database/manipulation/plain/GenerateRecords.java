@@ -4,27 +4,36 @@ import database.config.Connector;
 
 import java.sql.Connection;
 import java.sql.Statement;
+import java.util.Random;
 
 public class GenerateRecords {
-    public static boolean GenerateCourseRecord() throws Exception{
-        String sql="insert into courses values(" +
-                "1," +
-                "2," +
-                "3" +
-                ")";
+    public static boolean GenerateCourseRecords() throws Exception{
+        Random rand = new Random();
         Connector mc = new Connector();
         Connection conn=mc.getConnection();
         Statement stmt=conn.createStatement();
-        int result=stmt.executeUpdate(sql);
-        if (result>0){
-            stmt.close();
-            conn.close();
-            System.out.println("Record Inserted");
-            return true;
+        for(int i=0;i<5;i++){
+            int s_id=rand.nextInt(100);
+            int grades=rand.nextInt(100);
+            int t_id=rand.nextInt(100);
+
+            String sql="insert into courses values(" +
+                    s_id + "," +
+                    grades + "," +
+                    t_id +
+                    ")";
+            int result=stmt.executeUpdate(sql);
+            if(result==1){
+                System.out.println("Record " + i + " Inserted");
+            }
         }
         stmt.close();
         conn.close();
-        System.out.println("insert failed");
-        return false;
+        return true;
     }
 }
+//        String sql="insert into courses values(" +
+//                "1," +
+//                "2," +
+//                "3" +
+//                ")";

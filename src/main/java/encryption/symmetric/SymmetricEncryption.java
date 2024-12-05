@@ -6,11 +6,9 @@ public class SymmetricEncryption {
     public static String Encrypt(Object obj) throws Exception {
         switch(obj.getClass().getName()) {
             case "java.lang.Integer":
-                System.out.println("INT11");
-                return obj.toString();
+                return AESExample.encrypt(String.valueOf((int)obj));
             case "java.lang.String":
                 String cipherText = AESExample.encrypt((String) obj);
-                System.out.println(cipherText);
                 return cipherText;
             default:
                 System.out.println(obj.getClass().getName());
