@@ -7,6 +7,6 @@ public class TestConnector {
     @Test
     public void testConnector() {
         Connector connector = new Connector();
-        connector.Connect();
+        connector.closeConnection();
     }
 }

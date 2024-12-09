@@ -10,7 +10,9 @@ import database.config.Connector;
 import encryption.symmetric.SymmetricEncryption;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.Map;
 
 public class InsertEncryptedRecords {
 
@@ -33,8 +35,25 @@ public class InsertEncryptedRecords {
             return true;
         }
         stmt.close();
-        conn.close();
+        mc.closeConnection();
         System.out.println("insert failed");
+        return false;
+    }
+
+    public static boolean InsertEncryptedCourse(Connection conn, Map<String, Object> data)throws Exception{
+        String sql = "INSERT INTO encrypted_courses (en_course_id, en_grade, en_student_id) VALUES (?, ?, ?)";
+        String en_course_id= SymmetricEncryption.Encrypt(data.get("courseId"));
+        String en_grade= SymmetricEncryption.Encrypt(data.get("grade"));
+        String en_student_id= SymmetricEncryption.Encrypt(data.get("studentId"));
+
+
+        try (PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setObject(1, en_course_id);
+            preparedStatement.setObject(2, en_grade);
+            preparedStatement.setObject(3, en_student_id);
+            preparedStatement.executeUpdate();
+        }
+
         return false;
     }
 

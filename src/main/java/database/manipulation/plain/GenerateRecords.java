@@ -1,17 +1,17 @@
 package database.manipulation.plain;
 
-import database.config.Connector;
-
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Map;
 import java.util.Random;
 
 public class GenerateRecords {
-    public static boolean GenerateCourseRecords() throws Exception{
+    public static boolean GenerateCourseRecords(Connection conn) throws Exception{
         Random rand = new Random();
-        Connector mc = new Connector();
-        Connection conn=mc.getConnection();
         Statement stmt=conn.createStatement();
+
         for(int i=0;i<5;i++){
             int s_id=rand.nextInt(100);
             int grades=rand.nextInt(100);
@@ -27,11 +27,26 @@ public class GenerateRecords {
                 System.out.println("Record " + i + " Inserted");
             }
         }
+
         stmt.close();
-        conn.close();
         return true;
     }
+
+    // 构造map对象将字段插入数据表
+    public static void InsertCourseRecord(Connection conn, Map<String, Object> data) throws SQLException {
+        String sql = "INSERT INTO courses (course_id, grade, s_id) VALUES (?, ?, ?)";
+
+
+        try (PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setObject(1, data.get("courseId"));
+            preparedStatement.setObject(2, data.get("grade"));
+            preparedStatement.setObject(3, data.get("studentId"));
+            preparedStatement.executeUpdate();
+        }
+    }
 }
+
+
 //        String sql="insert into courses values(" +
 //                "1," +
 //                "2," +

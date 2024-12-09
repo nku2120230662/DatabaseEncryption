@@ -5,7 +5,8 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 
-public class AESExample {
+public class SimpleAES {
+    // 固定密钥和初始化向量
     final static String key = "1234567890123456"; // 16 字节密钥
     final static String iv = "1234567890123456";  // 16 字节初始向量
 

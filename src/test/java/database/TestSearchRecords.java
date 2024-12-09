@@ -1,12 +1,19 @@
 package database;
 
+import database.config.Connector;
 import database.manipulation.crypt.SearchEncryptedRecords;
-import database.manipulation.plain.SearchRecord;
 import org.junit.Test;
+
+import java.sql.Connection;
 
 public class TestSearchRecords {
     @Test
     public void testSearchEncryptedStudent() throws Exception {
-        SearchEncryptedRecords.SearchEncryptedStudent();
+        Connector mc = new Connector();
+        Connection conn=mc.getConnection();
+
+        SearchEncryptedRecords.SearchEncryptedCourses(conn);
+
+        mc.closeConnection();
     }
 }
