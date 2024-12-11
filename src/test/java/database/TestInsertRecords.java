@@ -11,12 +11,16 @@ import java.util.Map;
 
 public class TestInsertRecords {
     @Test
-    public void testInsertEncryptedStudent() {
-        try {
-            InsertEncryptedRecords.InsertEncryptedStudent();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    public void testInsertEncryptedStudent() throws Exception {
+        Map mp=new HashMap();
+        mp.put("id","1");
+        mp.put("name","duan");
+        Connector mc = new Connector();
+        Connection conn=mc.getConnection();
+
+        InsertEncryptedRecords.InsertEncryptedStudent(conn,mp);
+
+        mc.closeConnection();
     }
     @Test
     public void testInsertCourseByMap() throws Exception {

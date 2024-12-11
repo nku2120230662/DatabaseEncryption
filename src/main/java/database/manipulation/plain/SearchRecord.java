@@ -1,20 +1,16 @@
 package database.manipulation.plain;
 
-import database.config.Connector;
-
+import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 public class SearchRecord {
 
-    // 查询表hello的全部字段
-    public static boolean SearchHello() throws Exception{
-        Connector mc = new Connector();
-        Statement stmt = null;
-        stmt = mc.getConnection().createStatement();
+    // 查询表student的全部字段
+    public static boolean SearchStudents(Connection conn) throws Exception{
+        Statement stmt = conn.createStatement();
 
-        ResultSet rs = stmt.executeQuery("select * from hello");
+        ResultSet rs = stmt.executeQuery("select * from students");
         // 展开结果集数据库
         while (rs.next()) {
                 // 通过字段检索
@@ -25,7 +21,6 @@ public class SearchRecord {
                 System.out.print("\n");
             }
             stmt.close();
-        mc.closeConnection();
         return true;
     }
 }

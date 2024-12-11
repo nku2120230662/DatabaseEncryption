@@ -1,7 +1,6 @@
 package database;
 
 import database.config.Connector;
-import database.manipulation.crypt.InsertEncryptedRecords;
 import database.manipulation.plain.GenerateRecords;
 import org.junit.Test;
 
@@ -15,6 +14,14 @@ public class TestGenerateRecords {
         Connector mc = new Connector();
         Connection conn=mc.getConnection();
         GenerateRecords.GenerateCourseRecords(conn);
+        mc.closeConnection();
+    }
+
+    @Test
+    public void testGenerateStudentRecords() throws Exception {
+        Connector mc = new Connector();
+        Connection conn=mc.getConnection();
+        GenerateRecords.GenerateStudentRecords(conn);
         mc.closeConnection();
     }
 

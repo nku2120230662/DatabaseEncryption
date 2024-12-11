@@ -11,8 +11,8 @@ public class SymmetricEncryption {
                 String cipherText = SimpleAES.encrypt((String) obj);
                 return cipherText;
             default:
-                System.out.println(obj.getClass().getName());
-                return obj.toString();
+                String cipherText1 = SimpleAES.encrypt((String) obj);
+                return cipherText1;
         }
     }
 

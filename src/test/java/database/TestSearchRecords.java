@@ -12,7 +12,7 @@ public class TestSearchRecords {
         Connector mc = new Connector();
         Connection conn=mc.getConnection();
 
-        SearchEncryptedRecords.SearchEncryptedCourses(conn);
+        SearchEncryptedRecords.SearchEncryptedStudents(conn);
 
         mc.closeConnection();
     }

@@ -16,16 +16,14 @@ import java.util.Map;
 
 public class InsertEncryptedRecords {
 
-    public static boolean InsertEncryptedStudent()throws Exception{
-        String en_id= SymmetricEncryption.Encrypt(1234);
-        String en_name= SymmetricEncryption.Encrypt("name");
+    public static boolean InsertEncryptedStudent(Connection conn, Map<String, Object> data)throws Exception{
+        String en_id= SymmetricEncryption.Encrypt(data.get("id"));
+        String en_name= SymmetricEncryption.Encrypt(data.get("name"));
         String sql="insert into encrypted_students values (" +
                 "'" +en_id+ "'"+
                 ",'" +en_name+ "'"+
                 ")";
         System.out.println(sql);
-        Connector mc = new Connector();
-        Connection conn=mc.getConnection();
         Statement stmt=conn.createStatement();
         int result=stmt.executeUpdate(sql);
         if (result>0){
@@ -34,9 +32,9 @@ public class InsertEncryptedRecords {
             System.out.println("Record Inserted");
             return true;
         }
-        stmt.close();
-        mc.closeConnection();
         System.out.println("insert failed");
+
+        stmt.close();
         return false;
     }
 

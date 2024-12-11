@@ -1,5 +1,7 @@
 package database.manipulation.plain;
 
+import database.parameter.RandomString;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -36,7 +38,6 @@ public class GenerateRecords {
     public static void InsertCourseRecord(Connection conn, Map<String, Object> data) throws SQLException {
         String sql = "INSERT INTO courses (course_id, grade, s_id) VALUES (?, ?, ?)";
 
-
         try (PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
             preparedStatement.setObject(1, data.get("courseId"));
             preparedStatement.setObject(2, data.get("grade"));
@@ -44,11 +45,26 @@ public class GenerateRecords {
             preparedStatement.executeUpdate();
         }
     }
+
+    public static void GenerateStudentRecords(Connection conn) throws Exception {
+        Random rand = new Random();
+        Statement stmt=conn.createStatement();
+
+        for(int i=0;i<5;i++){
+            int id=rand.nextInt(100);
+            String name= RandomString.generateRandomString(5);
+
+            String sql="insert into students(id,name) values(" +
+                    id + "," +
+                    "'"+ name  + "'"+
+                    ")";
+            System.out.println(sql);
+            int result=stmt.executeUpdate(sql);
+            if(result==1){
+                System.out.println("Record " + i + " Inserted");
+            }
+        }
+
+        stmt.close();
+    }
 }
-
-
-//        String sql="insert into courses values(" +
-//                "1," +
-//                "2," +
-//                "3" +
-//                ")";

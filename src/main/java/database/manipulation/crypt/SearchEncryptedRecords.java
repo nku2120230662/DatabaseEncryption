@@ -15,10 +15,10 @@ public class SearchEncryptedRecords {
         // 展开结果集数据库
         while (rs.next()) {
             // 通过字段检索
-            String en_id=rs.getString("en_id");
-            String id= SymmetricEncryption.Decrypt(en_id);
+            String en_name=rs.getString("en_name");
+            String name= SymmetricEncryption.Decrypt(en_name);
             // 输出数据
-            System.out.print("ID: " + id);
+            System.out.print("Name: " + name);
             System.out.print("\n");
         }
         stmt.close();
