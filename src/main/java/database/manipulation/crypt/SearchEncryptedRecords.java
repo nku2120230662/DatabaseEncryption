@@ -41,4 +41,8 @@ public class SearchEncryptedRecords {
         stmt.close();
         return true;
     }
+
+    public static void SearchEncryptedStudentsJoinCourses(Connection conn) throws Exception {
+
+    }
 }

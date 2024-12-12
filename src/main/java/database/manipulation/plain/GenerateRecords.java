@@ -51,7 +51,8 @@ public class GenerateRecords {
         Statement stmt=conn.createStatement();
 
         for(int i=0;i<5;i++){
-            int id=rand.nextInt(100);
+//            int id=rand.nextInt(100);
+            int id=i+1;
             String name= RandomString.generateRandomString(5);
 
             String sql="insert into students(id,name) values(" +
