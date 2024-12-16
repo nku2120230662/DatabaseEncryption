@@ -16,7 +16,7 @@ public class InnerProductDemo {
         }
     }
 
-    // 模拟的数据库表
+    // 模拟的数据库表(内存中的数组操作)
     static class DatabaseTable {
         List<EncryptedRecord> records;
         int[] publicKey;

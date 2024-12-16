@@ -15,7 +15,6 @@ public class BilinearGroup {
     Field G2;
     Field Gt;
 
-
     public static void main(String[] args) {
         // 一、定义椭圆曲线参数
         // 1.从文件导入椭圆曲线参数

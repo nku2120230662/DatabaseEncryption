@@ -10,7 +10,7 @@ public class TestSimpleFE {
         SimpleFunctionalEncryption.KeyPair keyPair = new SimpleFunctionalEncryption.KeyPair(n);
 
         // 构造一个简单的消息向量
-        int[] message = {1, 2, 3, 4, 5};
+        int[] message = {1, 2, 3, 4, 6};
 
         System.out.println("公钥: ");
         for (int i = 0; i < keyPair.publicKey.length; i++) {
