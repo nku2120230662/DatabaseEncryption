@@ -1,4 +1,4 @@
-package exercise;
+package demo;
 
 import database.mapper.UserMapper;
 import database.model.User;

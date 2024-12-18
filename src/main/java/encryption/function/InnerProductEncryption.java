@@ -5,7 +5,7 @@ import encryption.parameter.PublicParameter;
 
 public class InnerProductEncryption {
     // 输入安全参数λ——决定群的维度（即密钥和密文空间大小）和n(客户端数量）
-    private int lambda;
+    private int lambda;// 暂时不设置，提前规定好
     private int n;
     // pp参与形成密文(1, lambda)
     private PublicParameter mypp;
@@ -30,7 +30,7 @@ public class InnerProductEncryption {
     }
 
     // 为每个客户端生成私钥
-        public void KeyGeneration(MasterKey myMsk, String x) {
+    public void KeyGeneration(MasterKey myMsk, String x) {
 
     }
 

@@ -1,4 +1,4 @@
-package exercise;
+package demo;
 
 import java.security.*;
 import java.util.Base64;

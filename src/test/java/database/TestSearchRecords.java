@@ -7,9 +7,17 @@ import org.junit.Test;
 
 import java.sql.Connection;
 
-import static database.manipulation.plain.SearchRecord.SearchStudentsJoinCourses;
-
 public class TestSearchRecords {
+
+    @Test
+    public void testPlainSelection() throws Exception {
+        Connector mc = new Connector();
+        Connection conn=mc.getConnection();
+
+        SearchRecord.SearchStudents(conn);
+
+        mc.closeConnection();
+    }
 
     @Test
     public void testPlainJoinQuery() throws Exception {
@@ -17,6 +25,18 @@ public class TestSearchRecords {
         Connection conn=mc.getConnection();
 
         SearchRecord.SearchStudentsJoinCourses(conn);
+
+        mc.closeConnection();
+    }
+
+    @Test
+    public void testMyPlainJoinQuery() throws Exception {
+        Connector mc = new Connector();
+        Connection conn=mc.getConnection();
+
+        String[] condition={"students","courses","students.id=courses.s_id"};
+
+        SearchRecord.MyPlainJoinQueries(conn,condition);
 
         mc.closeConnection();
     }
@@ -36,7 +56,8 @@ public class TestSearchRecords {
         Connector mc = new Connector();
         Connection conn=mc.getConnection();
 
-        SearchEncryptedRecords.SearchEncryptedStudentsJoinCourses(conn);
+        String[] condition={"students","courses","students.id=courses.s_id","id=2"};
+        SearchEncryptedRecords.MyEncryptedJoinQueries(conn,condition);
 
         mc.closeConnection();
     }
