@@ -56,7 +56,8 @@ public class TestSearchRecords {
         Connector mc = new Connector();
         Connection conn=mc.getConnection();
 
-        String[] condition={"students","courses","students.id=courses.s_id","id=2"};
+//        String[] condition={"students","courses","students.id=courses.s_id","id = 2"};
+        String[] condition={"students","courses","students.id=courses.s_id","id in [2,3]"};
         SearchEncryptedRecords.MyEncryptedJoinQueries(conn,condition);
 
         mc.closeConnection();

@@ -119,21 +119,54 @@ public class SearchEncryptedRecords {
     }
 
     private static List<Map<String, Object>> FilterCondition(List<Map<String, Object>> resultA, String filterA) {
-        List<Map<String, Object>> result=new ArrayList<>();
-        String attr=filterA.split("=")[0];
-        String val=filterA.split("=")[1];
-        for (Map<String, Object> row : resultA) {
-            if (MatchValue(row,attr,val)){
-                result.add(row);
+        // 初始化结果列表
+        List<Map<String, Object>> result = new ArrayList<>();
+        String[] parts = filterA.split(" ");
+        String attr = parts[0];
+        String condition = parts[2];
+        // 判断是否是in查询(attr=val 或 attr In [val1, val2, ...])
+        if(filterA.contains("=")){
+//            String[] parts = filterA.split("=");
+//            String attr = parts[0].trim();
+//            String condition = parts[1].trim();
+            String val = condition;
+            for (Map<String, Object> row : resultA) {
+                if (MatchValue(row, attr, val)) {
+                    result.add(row);
+                }
+            }
+        }else {
+//            String[] parts = filterA.split("In");
+//            String attr = parts[0].trim();
+//            String condition = parts[1].trim();
+            String[] inValues = condition.substring(1, condition.length() - 1).split(",");
+            for (Map<String, Object> row : resultA) {
+                if (MatchInValues(row, attr, inValues)) {
+                    // 多项式查询
+                    result.add(row);
+                }
             }
         }
-        return  result;
+        return result;
     }
 
+    // 判断是否为等值匹配
     private static boolean MatchValue(Map<String, Object> row, String attr, String val) {
-        Object value = row.get(attr);
-        // 检查 value 是否与 val 匹配（防止空指针异常）
-        return value != null && value.toString().equals(val);
+        return row.containsKey(attr) && val.equals(String.valueOf(row.get(attr)));
+    }
+
+    // 判断是否满足 In 范围条件
+    private static boolean MatchInValues(Map<String, Object> row, String attr, String[] inValues) {
+        if (!row.containsKey(attr)) {
+            return false;
+        }
+        String value = String.valueOf(row.get(attr));
+        for (String inVal : inValues) {
+            if (value.equals(inVal.trim())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean MatchRecord(Map<String, Object> rowA, Map<String, Object> rowB, String columnA, String columnB) {
