@@ -3,13 +3,11 @@ package database.manipulation.crypt;
 import encryption.symmetric.SymmetricEncryption;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SearchEncryptedRecords {
 
+    //SearchEncryptedStudents 查询密文表EncryptedStudents，以明文形式返回所有记录
     public static void SearchEncryptedStudents(Connection conn) throws Exception{
         Statement stmt = conn.createStatement();
 
@@ -17,10 +15,10 @@ public class SearchEncryptedRecords {
         // 展开结果集数据库
         while (rs.next()) {
             // 通过字段检索
-            String en_name=rs.getString("en_name");
-            String name= SymmetricEncryption.Decrypt(en_name);
+            String en_id =rs.getString("en_id");
+            String id = SymmetricEncryption.Decrypt(en_id);
             // 输出数据
-            System.out.print("Name: " + name);
+            System.out.print("id: " + id);
             System.out.print("\n");
         }
         stmt.close();
@@ -43,6 +41,7 @@ public class SearchEncryptedRecords {
         return true;
     }
 
+    // SearchEncryptedStudentsJoinCourses 实现基于非对称加密的IPE内存连接查询
     public static void SearchEncryptedStudentsJoinCourses(Connection conn) throws Exception {
         // 构造a表查询多项式F1(应该从客户端接收)
 
@@ -57,15 +56,17 @@ public class SearchEncryptedRecords {
         // 返回连接查询结果
     }
 
+    //MyEncryptedJoinQueries 实现基于对称加密的内存连接查询(相比于非对称密钥，只需要改变matchRecord逻辑和连接逻辑即可——只需要改变子函数内容)
     public static boolean MyEncryptedJoinQueries(Connection conn, String... condition) throws Exception {
         // 检查条件是否为空
         if (condition.length < 3) {
             throw new IllegalArgumentException("condition should contain at least table names and join condition.");
         }
 
-        String tableA = condition[0]; // 表A的名字
-        String tableB = condition[1]; // 表B的名字
+        String tableA = "encrypted_"+condition[0]; // 表A的名字
+        String tableB = "encrypted_"+condition[1]; // 表B的名字
         String joinCondition = condition[2]; // 连接条件，类似 "id" 或 "student_id = course_id"
+//        System.out.println(Arrays.toString(joinCondition.split("\\.|=")));
 
         // 1. 查询tableA
         String queryA = "SELECT * FROM " + tableA;
@@ -73,7 +74,7 @@ public class SearchEncryptedRecords {
         ResultSet rsA = stmt.executeQuery(queryA);
         List<Map<String, Object>> resultA = convertResultSetToList(rsA);
         String filterA = condition.length > 3 ? condition[3] : "";  // 例如：student_id > 10
-        if(!filterA.isEmpty()){;
+        if(!filterA.isEmpty()){
             resultA=FilterCondition(resultA,filterA);
         }
 
@@ -82,7 +83,7 @@ public class SearchEncryptedRecords {
         ResultSet rsB = stmt.executeQuery(queryB);
         List<Map<String, Object>> resultB = convertResultSetToList(rsB);
         String filterB = condition.length > 4 ? condition[4] : "";  // 例如：course_name = 'Math'
-        if(!filterB.isEmpty()){;
+        if(!filterB.isEmpty()){
             resultB=FilterCondition(resultB,filterB);
         }
 
@@ -90,13 +91,18 @@ public class SearchEncryptedRecords {
         List<Map<String, Object>> joinResult = new ArrayList<>();
 
         // 假设joinCondition为相等条件 "id"
-        String[] conditionParts = joinCondition.split("=");
-        if (conditionParts.length != 2) {
-            throw new IllegalArgumentException("Invalid join condition. Expected format 'columnA = columnB'.");
+        String[] conditionParts = joinCondition.split("\\.|=");
+        if (conditionParts.length != 4) {
+            throw new IllegalArgumentException("Invalid join condition. Expected format 'tableA.columnA = tableB.columnB'.");
         }
 
-        String columnA = conditionParts[0].split("\\.")[1];  // 表A中的连接列
-        String columnB = conditionParts[1].split("\\.")[1];  // 表B中的连接列
+        String columnA = "en_"+conditionParts[1];  // 表A中的连接列
+        String columnB = "en_"+conditionParts[3];  // 表B中的连接列
+
+//        System.out.println(tableA);
+//        System.out.println(tableB);
+//        System.out.println(columnA);
+//        System.out.println(columnB);
 
         // 内存中嵌套循环进行连接
         for (Map<String, Object> rowA : resultA) {
@@ -122,23 +128,16 @@ public class SearchEncryptedRecords {
         // 初始化结果列表
         List<Map<String, Object>> result = new ArrayList<>();
         String[] parts = filterA.split(" ");
-        String attr = parts[0];
-        String condition = parts[2];
+        String attr = "en_"+parts[0].trim();
+        String condition = parts[2].trim();
         // 判断是否是in查询(attr=val 或 attr In [val1, val2, ...])
         if(filterA.contains("=")){
-//            String[] parts = filterA.split("=");
-//            String attr = parts[0].trim();
-//            String condition = parts[1].trim();
-            String val = condition;
             for (Map<String, Object> row : resultA) {
-                if (MatchValue(row, attr, val)) {
+                if (MatchValue(row, attr, condition)) {
                     result.add(row);
                 }
             }
         }else {
-//            String[] parts = filterA.split("In");
-//            String attr = parts[0].trim();
-//            String condition = parts[1].trim();
             String[] inValues = condition.substring(1, condition.length() - 1).split(",");
             for (Map<String, Object> row : resultA) {
                 if (MatchInValues(row, attr, inValues)) {
@@ -152,7 +151,16 @@ public class SearchEncryptedRecords {
 
     // 判断是否为等值匹配
     private static boolean MatchValue(Map<String, Object> row, String attr, String val) {
-        return row.containsKey(attr) && val.equals(String.valueOf(row.get(attr)));
+        if(!row.containsKey(attr)) {
+            return false;
+        }
+        try{
+            String targetValue1= SymmetricEncryption.Encrypt(val);
+            String targetValue2= String.valueOf(row.get(attr));
+            return targetValue1.equals(targetValue2);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     // 判断是否满足 In 范围条件

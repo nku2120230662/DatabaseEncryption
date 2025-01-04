@@ -34,7 +34,7 @@ public class TestSearchRecords {
         Connector mc = new Connector();
         Connection conn=mc.getConnection();
 
-        String[] condition={"students","courses","students.id=courses.s_id"};
+        String[] condition={"students","courses","students.id=courses.student_id","id in [2,3]"};
 
         SearchRecord.MyPlainJoinQueries(conn,condition);
 
@@ -56,8 +56,12 @@ public class TestSearchRecords {
         Connector mc = new Connector();
         Connection conn=mc.getConnection();
 
-//        String[] condition={"students","courses","students.id=courses.s_id","id = 2"};
-        String[] condition={"students","courses","students.id=courses.s_id","id in [2,3]"};
+//        String[] condition={"students","courses","students.id=courses.student_id","id = 2"};
+        String[] condition={"students","courses","students.id=courses.student_id","id = 2"};
+        // 接收明文查询请求
+        // 重写为密文查询请求
+        // 查询对象 table-->encrypted_table-------attr-->en_attr
+        // 在密文表中执行查询请求
         SearchEncryptedRecords.MyEncryptedJoinQueries(conn,condition);
 
         mc.closeConnection();

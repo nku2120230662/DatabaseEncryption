@@ -1,4 +1,4 @@
-package encryption.symmetric;
+package encryption.assymmetric;
 
 import encryption.function.SimpleAES;
 
@@ -19,7 +19,6 @@ public class AssymmetricEncryption {
     public static String Decrypt(String CipherText)throws Exception {
 
         String DecryptedText = SimpleAES.decrypt(CipherText);
-
         return DecryptedText;
     }
 }

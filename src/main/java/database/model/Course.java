@@ -2,11 +2,11 @@ package database.model;
 
 public class Course {
     private int course_id;
-    private int s_id;//学生id
+    private int student_id;//学生id
     private float grade;//成绩
-    Course(int course_id, int s_id, float grade) {
+    Course(int course_id, int student_id, float grade) {
         this.course_id = course_id;
-        this.s_id = s_id;
+        this.student_id = student_id;
         this.grade = grade;
     }
 
@@ -18,12 +18,12 @@ public class Course {
         this.grade = grade;
     }
 
-    public int getS_id() {
-        return s_id;
+    public int getStudent_id() {
+        return student_id;
     }
 
-    public void setS_id(int s_id) {
-        this.s_id = s_id;
+    public void setStudent_id(int student_id) {
+        this.student_id = student_id;
     }
 
     public int getCourse_id() {
