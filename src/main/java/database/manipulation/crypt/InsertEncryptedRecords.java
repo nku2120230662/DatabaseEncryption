@@ -28,7 +28,6 @@ public class InsertEncryptedRecords {
         int result=stmt.executeUpdate(sql);
         if (result>0){
             stmt.close();
-            conn.close();
             System.out.println("Record Inserted");
             return true;
         }

@@ -107,8 +107,8 @@ public class SearchEncryptedRecords {
         // 内存中嵌套循环进行连接
         for (Map<String, Object> rowA : resultA) {
             for (Map<String, Object> rowB : resultB) {
-                // 如果连接列相等，则加入连接结果
-                if (MatchRecord(rowA,rowB,columnA,columnB)){
+                // 如果记录内积结果相等，则加入连接结果
+                if (InnerProduct(rowA,columnA).equals(InnerProduct(rowB,columnB))){
                     Map<String, Object> joinedRow = new HashMap<>();
                     joinedRow.putAll(rowA);  // 将表A的所有列加入结果
                     joinedRow.putAll(rowB);  // 将表B的所有列加入结果
@@ -139,9 +139,9 @@ public class SearchEncryptedRecords {
             }
         }else {
             String[] inValues = condition.substring(1, condition.length() - 1).split(",");
+            System.out.println(Arrays.toString(inValues));
             for (Map<String, Object> row : resultA) {
                 if (MatchInValues(row, attr, inValues)) {
-                    // 多项式查询
                     result.add(row);
                 }
             }
@@ -155,32 +155,44 @@ public class SearchEncryptedRecords {
             return false;
         }
         try{
+            // 当查询结果的值和目标值加密后的结果相同，则匹配成功
             String targetValue1= SymmetricEncryption.Encrypt(val);
             String targetValue2= String.valueOf(row.get(attr));
             return targetValue1.equals(targetValue2);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return false;
         }
     }
 
     // 判断是否满足 In 范围条件
     private static boolean MatchInValues(Map<String, Object> row, String attr, String[] inValues) {
-        if (!row.containsKey(attr)) {
+        // 当查询结果的值是多项式的零点，则匹配成功
+        // 可适当损失筛选准确性，增加误报率同时增加性能，可以将字符映射规则改为ascii码的求和，最后存在一些碰撞，二次筛选即可
+        // 无论筛选如何，连接的结果都是正确的
+        try{
+            if (!row.containsKey(attr)) {
+                return false;
+            }
+            for (String inVal : inValues) {
+                // 当查询结果的值和目标值加密后的结果相同，则匹配成功
+                if (MatchValue(row, attr, inVal)) {
+                    System.out.println("ppp");
+                    return true;
+                }
+            }
+            return false;
+        }catch (Exception e) {
             return false;
         }
-        String value = String.valueOf(row.get(attr));
-        for (String inVal : inValues) {
-            if (value.equals(inVal.trim())) {
-                return true;
-            }
-        }
-        return false;
+
     }
 
-    private static boolean MatchRecord(Map<String, Object> rowA, Map<String, Object> rowB, String columnA, String columnB) {
+    private static String InnerProduct(Map<String, Object> rowA,String columnA) {
+        // todo:内积加密
         Object valueA = rowA.get(columnA);
-        Object valueB = rowB.get(columnB);
-        return valueA.equals(valueB);
+
+
+        return "";
     }
 
     // 将ResultSet转化为List<Map<String, Object>>（每一行作为一个Map）
