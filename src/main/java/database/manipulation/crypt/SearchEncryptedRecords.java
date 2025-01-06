@@ -41,24 +41,9 @@ public class SearchEncryptedRecords {
         return true;
     }
 
-    // SearchEncryptedStudentsJoinCourses 实现基于非对称加密的IPE内存连接查询
-    public static void SearchEncryptedStudentsJoinCourses(Connection conn) throws Exception {
-        // 构造a表查询多项式F1(应该从客户端接收)
-
-        // 检索并根据特定字段值代入F1是否为0存储a表数据
-
-        // 构造b表查询多项式F2(应该从客户端接收)
-
-        // 检索并根据特定字段值代入F2是否为0存储b表数据
-
-        // 对于a表和b表的连接字段根据nest loop方法执行内积操作，判断是否为0，若为0则执行连接操作
-
-        // 返回连接查询结果
-    }
-
-    //MyEncryptedJoinQueries 实现基于对称加密的内存连接查询(相比于非对称密钥，只需要改变matchRecord逻辑和连接逻辑即可——只需要改变子函数内容)
-    public static boolean MyEncryptedJoinQueries(Connection conn, String... condition) throws Exception {
-        // 检查条件是否为空
+    // SearchStudentsJoinCoursesByIpe 实现基于非对称加密的IPE内存连接查询
+    public static boolean SearchStudentsJoinCoursesByIpe(Connection conn,String... condition) throws Exception {
+        // 查询是否合法
         if (condition.length < 3) {
             throw new IllegalArgumentException("condition should contain at least table names and join condition.");
         }
@@ -66,7 +51,98 @@ public class SearchEncryptedRecords {
         String tableA = "encrypted_"+condition[0]; // 表A的名字
         String tableB = "encrypted_"+condition[1]; // 表B的名字
         String joinCondition = condition[2]; // 连接条件，类似 "id" 或 "student_id = course_id"
-//        System.out.println(Arrays.toString(joinCondition.split("\\.|=")));
+        // 1. 查询tableA
+        String queryA = "SELECT * FROM " + tableA;
+        Statement stmt = conn.createStatement();
+        ResultSet rsA = stmt.executeQuery(queryA);
+        List<Map<String, Object>> resultA = convertResultSetToList(rsA);
+        String filterA = condition.length > 3 ? condition[3] : "";  // 例如：student_id > 10
+        if(!filterA.isEmpty()){
+            // 构造a表查询多项式F1(应该从客户端接收)
+            // 检索并根据特定字段值代入F1是否为0存储a表数据
+            resultA=FilterCondition(resultA,filterA);
+        }
+        // 2. 查询tableB
+        String queryB = "SELECT * FROM " + tableB ;
+        ResultSet rsB = stmt.executeQuery(queryB);
+        List<Map<String, Object>> resultB = convertResultSetToList(rsB);
+        String filterB = condition.length > 4 ? condition[4] : "";  // 例如：course_name = 'Math'
+        if(!filterB.isEmpty()){
+            // 构造b表查询多项式F2(应该从客户端接收)
+            // 检索并根据特定字段值代入F2是否为0存储b表数据
+            resultB=FilterCondition(resultB,filterB);
+        }
+        // 对于a表和b表的连接字段根据nest loop方法执行内积操作，判断是否为0，若为0则执行连接操作
+        List<Map<String, Object>> joinResult = new ArrayList<>();
+
+        // 假设joinCondition为相等条件 "id"
+        String[] conditionParts = joinCondition.split("\\.|=");
+        if (conditionParts.length != 4) {
+            throw new IllegalArgumentException("Invalid join condition. Expected format 'tableA.columnA = tableB.columnB'.");
+        }
+
+        String columnA = "en_"+conditionParts[1];  // 表A中的连接列
+        String columnB = "en_"+conditionParts[3];  // 表B中的连接列
+        // 内存中嵌套循环进行连接
+        for (Map<String, Object> rowA : resultA) {
+            for (Map<String, Object> rowB : resultB) {
+                // 如果记录内积结果相等，则加入连接结果
+                if (InnerProduct(rowA,columnA).equals(InnerProduct(rowB,columnB))){
+                    Map<String, Object> joinedRow = new HashMap<>();
+                    joinedRow.putAll(rowA);  // 将表A的所有列加入结果
+                    joinedRow.putAll(rowB);  // 将表B的所有列加入结果
+                    joinResult.add(joinedRow);  // 将连接后的行加入到结果集
+                }
+            }
+        }
+        // 解密连接后的结果
+        DecryptResultByIpe(joinResult);
+
+        // 打印连接后的结果
+        printJoinResult(joinResult);
+        stmt.close();
+
+        return !joinResult.isEmpty();
+    }
+
+    private static String InnerProduct(Map<String, Object> rowA,String columnA) {
+        // todo:内积加密
+        Object valueA = rowA.get(columnA);
+
+        return "";
+    }
+
+    public static void DecryptResultByIpe(List<Map<String, Object>> joinResult) {
+        if (joinResult == null || joinResult.isEmpty()) {
+            return; // 防止空指针异常
+        }
+
+        for (Map<String, Object> map : joinResult) {
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                Object originalValue = entry.getValue();
+                if (originalValue != null) {
+                    try {
+                        Object decryptedValue = SymmetricEncryption.Decrypt((String) originalValue);
+                        entry.setValue(decryptedValue); // 替换原值为解密后的值
+                    } catch (Exception e) {
+                        System.err.println("解密失败：" + e.getMessage());
+                    }
+                }
+            }
+        }
+    }
+
+    //SearchStudentsJoinCoursesBySymmetric 实现基于对称加密的内存连接查询(相比于非对称密钥，只需要改变matchRecord逻辑和连接逻辑即可——只需要改变子函数内容)
+    public static boolean SearchStudentsJoinCoursesBySymmetric(Connection conn, String... condition) throws Exception {
+        // 检查条件是否为空
+        if (condition.length < 3) {
+            throw new IllegalArgumentException("condition should contain at least table names and join condition.");
+        }
+
+        // 重写表名
+        String tableA = "encrypted_"+condition[0]; // 表A的名字
+        String tableB = "encrypted_"+condition[1]; // 表B的名字
+        String joinCondition = condition[2]; // 连接条件，类似 "id" 或 "student_id = course_id"
 
         // 1. 查询tableA
         String queryA = "SELECT * FROM " + tableA;
@@ -99,16 +175,11 @@ public class SearchEncryptedRecords {
         String columnA = "en_"+conditionParts[1];  // 表A中的连接列
         String columnB = "en_"+conditionParts[3];  // 表B中的连接列
 
-//        System.out.println(tableA);
-//        System.out.println(tableB);
-//        System.out.println(columnA);
-//        System.out.println(columnB);
-
         // 内存中嵌套循环进行连接
         for (Map<String, Object> rowA : resultA) {
             for (Map<String, Object> rowB : resultB) {
-                // 如果记录内积结果相等，则加入连接结果
-                if (InnerProduct(rowA,columnA).equals(InnerProduct(rowB,columnB))){
+                // 如果密文数值相等，则加入连接结果——基于对称加密的内存连接查询
+                if (rowA.get(columnA).equals(rowB.get(columnB))){
                     Map<String, Object> joinedRow = new HashMap<>();
                     joinedRow.putAll(rowA);  // 将表A的所有列加入结果
                     joinedRow.putAll(rowB);  // 将表B的所有列加入结果
@@ -117,17 +188,42 @@ public class SearchEncryptedRecords {
             }
         }
 
-        // 打印连接后的结果（可以根据需要改成返回或者处理结果）
+        // 解密连接后的结果
+        DecryptResultBySymmetric(joinResult);
+
+        // 打印连接后的结果
         printJoinResult(joinResult);
         stmt.close();
 
         return !joinResult.isEmpty();
     }
 
+    public static void DecryptResultBySymmetric(List<Map<String, Object>> joinResult) {
+        if (joinResult == null || joinResult.isEmpty()) {
+            return; // 防止空指针异常
+        }
+
+        for (Map<String, Object> map : joinResult) {
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                Object originalValue = entry.getValue();
+                if (originalValue != null) {
+                    try {
+                        Object decryptedValue = SymmetricEncryption.Decrypt((String) originalValue);
+                        entry.setValue(decryptedValue); // 替换原值为解密后的值
+                    } catch (Exception e) {
+                        System.err.println("解密失败：" + e.getMessage());
+                    }
+                }
+            }
+        }
+    }
+
+
     private static List<Map<String, Object>> FilterCondition(List<Map<String, Object>> resultA, String filterA) {
-        // 初始化结果列表
+        // 创建结果列表
         List<Map<String, Object>> result = new ArrayList<>();
         String[] parts = filterA.split(" ");
+        // 重写属性名
         String attr = "en_"+parts[0].trim();
         String condition = parts[2].trim();
         // 判断是否是in查询(attr=val 或 attr In [val1, val2, ...])
@@ -173,10 +269,10 @@ public class SearchEncryptedRecords {
             if (!row.containsKey(attr)) {
                 return false;
             }
+            // todo:多项式匹配
             for (String inVal : inValues) {
                 // 当查询结果的值和目标值加密后的结果相同，则匹配成功
                 if (MatchValue(row, attr, inVal)) {
-                    System.out.println("ppp");
                     return true;
                 }
             }
@@ -184,15 +280,6 @@ public class SearchEncryptedRecords {
         }catch (Exception e) {
             return false;
         }
-
-    }
-
-    private static String InnerProduct(Map<String, Object> rowA,String columnA) {
-        // todo:内积加密
-        Object valueA = rowA.get(columnA);
-
-
-        return "";
     }
 
     // 将ResultSet转化为List<Map<String, Object>>（每一行作为一个Map）
