@@ -21,7 +21,7 @@ public class BilinearGroup {
 //        Pairing bp = PairingFactory.getPairing("a.properties");
 
         // 2.自定义曲线参数
-         int rBits = 36;
+         int rBits = 32;
          int qBits = 36;
          TypeACurveGenerator pg = new TypeACurveGenerator(rBits, qBits);
          PairingParameters pp = pg.generate();
