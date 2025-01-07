@@ -1,5 +1,6 @@
 package database.manipulation.crypt;
 
+import encryption.function.GeneratePolynomial;
 import encryption.symmetric.SymmetricEncryption;
 
 import java.sql.*;
@@ -252,24 +253,47 @@ public class SearchEncryptedRecords {
         }
         try{
             // 当查询结果的值和目标值加密后的结果相同，则匹配成功
-            String targetValue1= SymmetricEncryption.Encrypt(val);
-            String targetValue2= String.valueOf(row.get(attr));
-            return targetValue1.equals(targetValue2);
+            String targetValue = SymmetricEncryption.Encrypt(val);
+            String sourceValue = String.valueOf(row.get(attr));
+            return targetValue.equals(sourceValue);
         } catch (Exception e) {
             return false;
         }
     }
 
-    // 判断是否满足 In 范围条件
+    // MatchInValues 多项式匹配，判断row是否满足 In 范围条件
+    // 输入：若干明文值——用于构造多项式，一个密文值，判断是否为多项式零点
+    // 输出：是否为零点
     private static boolean MatchInValues(Map<String, Object> row, String attr, String[] inValues) {
-        // 当查询结果的值是多项式的零点，则匹配成功
-        // 可适当损失筛选准确性，增加误报率同时增加性能，可以将字符映射规则改为ascii码的求和，最后存在一些碰撞，二次筛选即可
-        // 无论筛选如何，连接的结果都是正确的
+
         try{
             if (!row.containsKey(attr)) {
                 return false;
             }
-            // todo:多项式匹配
+            // 将inValues转换为整数数组
+            int[] intValues = Arrays.stream(inValues)
+                    .mapToInt(Integer::parseInt)
+                    .toArray();
+            int[] polynomial = GeneratePolynomial.function(intValues);
+
+            // 当前是解密对应字段，判断是否为零点
+            // todo:修改多项式构造方案，修改判定条件
+            // 可适当损失筛选准确性，增加误报率同时增加性能，可以将字符映射规则改为ascii码的求和，最后存在一些碰撞，二次筛选即可
+            // 无论筛选如何，连接的结果都是正确的
+            int value=Integer.parseInt(SymmetricEncryption.Decrypt(row.get(attr).toString()));
+            // 当查询结果的值是多项式的零点，则匹配成功
+            return GeneratePolynomial.isZeroPoint(polynomial, value);
+        }catch (Exception e) {
+            return false;
+        }
+    }
+
+    // 判断是否满足 In 范围条件
+    private static boolean OriginalMatchInValues(Map<String, Object> row, String attr, String[] inValues) {
+        try{
+            if (!row.containsKey(attr)) {
+                return false;
+            }
             for (String inVal : inValues) {
                 // 当查询结果的值和目标值加密后的结果相同，则匹配成功
                 if (MatchValue(row, attr, inVal)) {

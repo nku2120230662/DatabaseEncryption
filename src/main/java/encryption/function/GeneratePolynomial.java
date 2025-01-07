@@ -26,4 +26,19 @@ public class GeneratePolynomial {
         }
         return result;
     }
+
+    // 判断一个整数是否为多项式的零点
+    public static boolean isZeroPoint(int[] polynomial, int x) {
+        int result = 0;
+        int power = 1; // 当前 x 的幂次，初始为 x^0 = 1
+
+        // 计算多项式值：result = c0 + c1 * x + c2 * x^2 + ...
+        for (int coefficient : polynomial) {
+            result += coefficient * power;
+            power *= x; // 更新 x 的幂次
+        }
+
+        // 如果结果为 0，则 x 是多项式的零点
+        return result == 0;
+    }
 }
