@@ -1,7 +1,7 @@
 package encryption.function;
 
-// ConvertStringToInt : 作用于多项式函数映射，目的是把字符串映射到数域上
-public class ConvertStringToInt {
+// MapStringToInt : 作用于多项式函数映射，目的是把字符串映射到数域上
+public class MapStringToInt {
     public static int function(String input) {
         // res后期为bigInt
         int res=0;
