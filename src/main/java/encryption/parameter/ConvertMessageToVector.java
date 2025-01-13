@@ -1,4 +1,4 @@
-package encryption.function;
+package encryption.parameter;
 
 //
 public class ConvertMessageToVector {

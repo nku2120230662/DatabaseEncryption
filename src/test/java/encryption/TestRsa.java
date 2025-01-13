@@ -1,6 +1,6 @@
 package encryption;
 
-import encryption.function.SimpleRsa;
+import encryption.assymmetric.SimpleRsa;
 import org.junit.Test;
 
 public class TestRsa {

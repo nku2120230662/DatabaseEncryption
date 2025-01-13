@@ -1,6 +1,6 @@
 package function;
 
-import encryption.function.GeneratePolynomial;
+import encryption.parameter.GeneratePolynomial;
 import org.junit.Test;
 
 public class TestGeneratePolynomial {

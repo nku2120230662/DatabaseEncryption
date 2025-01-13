@@ -1,4 +1,4 @@
-package encryption.function;
+package encryption.parameter;
 
 // MapStringToInt : 作用于多项式函数映射，目的是把字符串映射到数域上
 public class MapStringToInt {

@@ -1,6 +1,6 @@
 package database.manipulation.crypt;
 
-import encryption.function.GeneratePolynomial;
+import encryption.parameter.GeneratePolynomial;
 import encryption.symmetric.SymmetricEncryption;
 
 import java.sql.*;
@@ -108,7 +108,9 @@ public class SearchEncryptedRecords {
 
     private static String InnerProduct(Map<String, Object> rowA,String columnA) {
         // todo:内积加密
+        // 1. 存储用户信息，权限控制，只有当前用户的私钥才具备内积能力，即特定用户的私钥取自于群空间中
         Object valueA = rowA.get(columnA);
+
 
         return "";
     }

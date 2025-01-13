@@ -1,4 +1,4 @@
-package encryption.function;
+package encryption.parameter;
 
 public class GeneratePolynomial {
     // 根据零点生成一个多项式,该多项式最后由客户端发送给服务器，服务器逐行解密将匹配多项式的记录存储到内存中

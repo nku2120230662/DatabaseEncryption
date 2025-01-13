@@ -1,6 +1,6 @@
 package encryption.assymmetric;
 
-import encryption.function.SimpleAES;
+import encryption.symmetric.SimpleAES;
 
 public class AssymmetricEncryption {
     public static String Encrypt(Object obj) throws Exception {

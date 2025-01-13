@@ -1,7 +1,5 @@
 package encryption.symmetric;
 
-import encryption.function.SimpleAES;
-
 public class SymmetricEncryption {
     public static String Encrypt(Object obj) throws Exception {
         switch(obj.getClass().getName()) {

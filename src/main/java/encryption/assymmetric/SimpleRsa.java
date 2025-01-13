@@ -1,4 +1,4 @@
-package encryption.function;
+package encryption.assymmetric;
 
 import javax.crypto.Cipher;
 import java.security.KeyFactory;

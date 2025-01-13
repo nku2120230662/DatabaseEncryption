@@ -2,8 +2,8 @@ package encryption;
 
 import org.junit.Test;
 
-import static encryption.function.SimpleAES.decrypt;
-import static encryption.function.SimpleAES.encrypt;
+import static encryption.symmetric.SimpleAES.decrypt;
+import static encryption.symmetric.SimpleAES.encrypt;
 
 public class TestAes {
     @Test

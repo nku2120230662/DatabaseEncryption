@@ -1,4 +1,4 @@
-package encryption.function;
+package encryption.symmetric;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;

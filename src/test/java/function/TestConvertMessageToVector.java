@@ -2,8 +2,8 @@ package function;
 
 import org.junit.Test;
 
-import static encryption.function.ConvertMessageToVector.convertMessageToVector;
-import static encryption.function.ConvertMessageToVector.convertVectorToMessage;
+import static encryption.parameter.ConvertMessageToVector.convertMessageToVector;
+import static encryption.parameter.ConvertMessageToVector.convertVectorToMessage;
 
 public class TestConvertMessageToVector {
     @Test

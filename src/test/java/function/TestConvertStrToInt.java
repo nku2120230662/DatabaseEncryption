@@ -1,6 +1,6 @@
 package function;
 
-import encryption.function.MapStringToInt;
+import encryption.parameter.MapStringToInt;
 import org.junit.Test;
 
 public class TestConvertStrToInt {
