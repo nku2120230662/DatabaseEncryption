@@ -1,4 +1,4 @@
-package function;
+package encryption.function;
 
 import encryption.parameter.MapStringToInt;
 import org.junit.Test;

@@ -1,6 +1,5 @@
-package encryption;
+package encryption.symmetric;
 
-import encryption.symmetric.SymmetricEncryption;
 import org.junit.Test;
 
 public class TestSymmetric {

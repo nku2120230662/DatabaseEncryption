@@ -1,4 +1,4 @@
-package encryption;
+package encryption.symmetric;
 
 import org.junit.Test;
 
