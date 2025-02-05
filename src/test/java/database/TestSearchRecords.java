@@ -64,8 +64,30 @@ public class TestSearchRecords {
         mc.closeConnection();
     }
 
+
+    /**
+     * 双表连接测试
+     * @throws Exception
+     */
     @Test
     public void testSearchStudentsJoinCoursesByIpe() throws Exception {
+        Connector mc = new Connector();
+        Connection conn=mc.getConnection();
+
+//        String[] condition={"students","courses","students.id=courses.student_id","id = 2"};"id in [2,3]"
+        String[] condition={"students","courses","students.id=courses.student_id","id in [2,3]"};
+
+        SearchEncryptedRecords.SearchStudentsJoinCoursesByIpe(conn,condition);
+
+        mc.closeConnection();
+    }
+
+    /**
+     * todo : 多表连接实现与测试
+     * @throws Exception
+     */
+    @Test
+    public void testSearchStudentsJoinCoursesAndOtherByIpe() throws Exception {
         Connector mc = new Connector();
         Connection conn=mc.getConnection();
 

@@ -6,6 +6,8 @@ import encryption.symmetric.SymmetricEncryption;
 import java.sql.*;
 import java.util.*;
 
+import static database.parameter.Constant.MY_USER;
+
 public class SearchEncryptedRecords {
 
     //SearchEncryptedStudents 查询密文表EncryptedStudents，以明文形式返回所有记录
@@ -42,7 +44,17 @@ public class SearchEncryptedRecords {
         return true;
     }
 
-    // SearchStudentsJoinCoursesByIpe 实现基于非对称加密的IPE内存连接查询
+    /**
+     * todo:SearchStudentsJoinCoursesByIpe 实现基于非对称加密的IPE内存连接查询
+     * 1. 被连接的列需要使用内积加密算法
+     * 2. 连接过程中对字段执行内积操作
+     * 3. 根据策略不同采用不同的揭秘策略
+     * @param conn
+     * @param condition
+     * @return
+     * @throws Exception
+     */
+    //
     public static boolean SearchStudentsJoinCoursesByIpe(Connection conn,String... condition) throws Exception {
         // 查询是否合法
         if (condition.length < 3) {
@@ -88,7 +100,7 @@ public class SearchEncryptedRecords {
         for (Map<String, Object> rowA : resultA) {
             for (Map<String, Object> rowB : resultB) {
                 // 如果记录内积结果相等，则加入连接结果
-                if (InnerProduct(rowA,columnA).equals(InnerProduct(rowB,columnB))){
+                if (InnerProduct(rowA,columnA,MY_USER).equals(InnerProduct(rowB,columnB,MY_USER))){
                     Map<String, Object> joinedRow = new HashMap<>();
                     joinedRow.putAll(rowA);  // 将表A的所有列加入结果
                     joinedRow.putAll(rowB);  // 将表B的所有列加入结果
@@ -106,13 +118,17 @@ public class SearchEncryptedRecords {
         return !joinResult.isEmpty();
     }
 
-    private static String InnerProduct(Map<String, Object> rowA,String columnA) {
-        // todo:内积加密
-        // 1. 存储用户信息，权限控制，只有当前用户的私钥才具备内积能力，即特定用户的私钥取自于群空间中
+    /**
+     * todo:InnerProduct，返回字段的内积加密值
+     * 查询向量：由用户生成的向量，表示查询条件或兴趣点。这里使用用户的身份信息，合法的用户应该具备内积的能力，即都取自于配对空间中。
+     * 数据向量：数据库中存储的向量，表示数据记录或特征。
+     * @param rowA
+     * @param columnA
+     * @return
+     */
+    private static String InnerProduct(Map<String, Object> rowA,String columnA,String userVector) {
         Object valueA = rowA.get(columnA);
-
-
-        return "";
+        return valueA == null ? "" : valueA.toString()+userVector;
     }
 
     public static void DecryptResultByIpe(List<Map<String, Object>> joinResult) {
@@ -263,11 +279,21 @@ public class SearchEncryptedRecords {
         }
     }
 
-    // MatchInValues 多项式匹配，判断row是否满足 In 范围条件
-    // 输入：若干明文值——用于构造多项式，一个密文值，判断是否为多项式零点
-    // 输出：是否为零点
-    private static boolean MatchInValues(Map<String, Object> row, String attr, String[] inValues) {
+    /**
+     * MatchInValues 多项式匹配，判断row是否满足 In 范围条件
+     *      输入：若干明文值——用于构造多项式，一个密文值，判断是否为多项式零点
+     *      输出：是否为零点
+     * todo:修改多项式构造方案，修改判定条件
+     * 可适当损失筛选准确性，增加误报率同时增加性能，可以将字符映射规则改为ascii码的求和，最后存在一些碰撞，二次筛选即可
+     * 无论筛选如何，连接的结果都是正确的
+     * @param row
+     * @param attr
+     * @param inValues
+     * @return
+     */
 
+
+    private static boolean MatchInValues(Map<String, Object> row, String attr, String[] inValues) {
         try{
             if (!row.containsKey(attr)) {
                 return false;
@@ -279,9 +305,6 @@ public class SearchEncryptedRecords {
             int[] polynomial = GeneratePolynomial.function(intValues);
 
             // 当前是解密对应字段，判断是否为零点
-            // todo:修改多项式构造方案，修改判定条件
-            // 可适当损失筛选准确性，增加误报率同时增加性能，可以将字符映射规则改为ascii码的求和，最后存在一些碰撞，二次筛选即可
-            // 无论筛选如何，连接的结果都是正确的
             int value=Integer.parseInt(SymmetricEncryption.Decrypt(row.get(attr).toString()));
             // 当查询结果的值是多项式的零点，则匹配成功
             return GeneratePolynomial.isZeroPoint(polynomial, value);
