@@ -15,6 +15,9 @@ public class TestCreateTable {
         Connection conn=mc.getConnection();
 
         CreateTable.CreateStudents(conn);
+        CreateTable.CreateCourses(conn);
+        CreateTable.CreateEncryptedStudents(conn);
+        CreateTable.CreateEncryptedCourses(conn);
 
         mc.closeConnection();
     }

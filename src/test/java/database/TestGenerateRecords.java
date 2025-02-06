@@ -65,7 +65,7 @@ public class TestGenerateRecords {
         // 同时
         for(int i=0;i<5;i++){
             Map mp=new HashMap();
-            mp.put("id",i);
+            mp.put("id",(Object)i );
             mp.put("name", RandomString.generateRandomString(5));
             GenerateRecords.InsertStudentRecord(conn,mp);
             InsertEncryptedRecords.InsertEncryptedStudent(conn,mp);
@@ -82,9 +82,9 @@ public class TestGenerateRecords {
         // 同时
         for(int i=0;i<5;i++){
             Map mp=new HashMap();
-            mp.put("courseId",10+i);
-            mp.put("studentId",i);
-            mp.put("grade", 20+i);
+            mp.put("courseId",(Object)(10+i));
+            mp.put("studentId",(Object)i);
+            mp.put("grade", (Object)(20+i));
             GenerateRecords.InsertCourseRecord(conn,mp);
             InsertEncryptedRecords.InsertEncryptedCourse(conn,mp);
         }

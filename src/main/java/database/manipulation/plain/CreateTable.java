@@ -13,7 +13,7 @@ public class CreateTable {
                 "(" +
                 "course_id INT," +
                 "grade DECIMAL," +
-                "s_id INT " +
+                "student_id INT " +
                 ")";
         Statement stmt=conn.createStatement();
         int result=stmt.executeUpdate(sql);//"CREATE TABLE IF NOT EXISTS courses (course_id INT,grade DECIMAL,s_id INT);"
