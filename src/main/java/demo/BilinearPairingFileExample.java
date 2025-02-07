@@ -29,11 +29,8 @@ public class BilinearPairingFileExample {
             System.out.println("g1: " + g1);
             Element g2 = pairing.getG2().newRandomElement().getImmutable();
             System.out.println("g2: " + g2);
-            Field Zr=pairing.getZr();
-            Element zr = pairing.getZr().newRandomElement().getImmutable();
-            System.out.println("Zr: " + zr);
 
-            saveElementsToFile(g1.toBytes(), g2.toBytes(), zr.toBytes(),filePath);
+            saveElementsToFile(g1.toBytes(), g2.toBytes(),filePath);
             System.out.println("G1 and G2 elements saved to file.");
         } catch (IOException e) {
             e.printStackTrace();
@@ -52,15 +49,9 @@ public class BilinearPairingFileExample {
             byte[][] elementsBytes = readElementsFromFile(filePath);
             Element g1Recovered = pairing.getG1().newElementFromBytes(elementsBytes[0]).getImmutable();
             Element g2Recovered = pairing.getG2().newElementFromBytes(elementsBytes[1]).getImmutable();
-            Element zrRecovered = pairing.getZr().newElementFromBytes(elementsBytes[2]).getImmutable();
 
             System.out.println("Recovered G1 element: " + g1Recovered);
             System.out.println("Recovered G2 element: " + g2Recovered);
-            System.out.println("Recovered Zr element: " + zrRecovered);
-
-
-
-
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -68,20 +59,18 @@ public class BilinearPairingFileExample {
         }
     }
 
-    private static void saveElementsToFile(byte[] g1, byte[] g2, byte[] zr,String filePath) throws IOException {
+    private static void saveElementsToFile(byte[] g1, byte[] g2, String filePath) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
             oos.writeObject(Base64.getEncoder().encodeToString(g1));
             oos.writeObject(Base64.getEncoder().encodeToString(g2));
-            oos.writeObject(Base64.getEncoder().encodeToString(zr));
         }
     }
 
     private static byte[][] readElementsFromFile(String filePath) throws IOException, ClassNotFoundException {
-        byte[][] result = new byte[3][];
+        byte[][] result = new byte[2][];
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
             result[0] = Base64.getDecoder().decode((String) ois.readObject());
             result[1] = Base64.getDecoder().decode((String) ois.readObject());
-            result[2]=Base64.getDecoder().decode((String) ois.readObject());
         }
         return result;
     }
